@@ -145,8 +145,18 @@ function App() {
           check
         </button>
       </div>
+      {outputLocal && outputZondax && (
+        <div>
+          Outputs :{" "}
+          {removePrefix(outputLocal) === removePrefix(outputZondax)
+            ? "MATCH"
+            : "DO NOT MATCH"}
+        </div>
+      )}
     </div>
   );
 }
+
+const removePrefix = (str: string) => str.replace(/^0x/, "");
 
 export default App;
