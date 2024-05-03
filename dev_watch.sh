@@ -1,0 +1,1 @@
+pnpx nodemon -w src -e "rs toml" -x "wasm-pack build --scope talismn" 

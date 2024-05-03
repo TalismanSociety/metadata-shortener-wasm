@@ -1,0 +1,42 @@
+[package]
+name = "metadata-shortener-wasm"
+version = "0.1.0"
+authors = ["Kheops <26880866+0xKheops@users.noreply.github.com>"]
+description = "A WASM wrapper around the metadata-shortener crate"
+edition = "2018"
+
+[lib]
+crate-type = ["cdylib", "rlib"]
+
+[features]
+default = ["console_error_panic_hook"]
+
+[dependencies]
+wasm-bindgen = "0.2.84"
+frame-metadata = { version = "16.0.0", default-features = false, features = [
+    "current",
+    "decode",
+] }
+hex = "0.4.3"
+metadata-shortener = { version = "0.2.0", default-features = false, features = [
+    "merkle-standard",
+    "proof-gen",
+] }
+parity-scale-codec = { version = "3.6.9", default-features = false, features = [
+    "derive",
+    "bit-vec",
+] }
+getrandom = { version = "0.2", features = ["js"] }
+
+# The `console_error_panic_hook` crate provides better debugging of panics by
+# logging them with `console.error`. This is great for development, but requires
+# all the `std::fmt` and `std::panicking` infrastructure, so isn't great for
+# code size when deploying.
+console_error_panic_hook = { version = "0.1.7", optional = true }
+
+[dev-dependencies]
+wasm-bindgen-test = "0.3.34"
+
+[profile.release]
+# Tell `rustc` to optimize for small code size.
+opt-level = "s"
