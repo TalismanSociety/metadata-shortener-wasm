@@ -1,10 +1,11 @@
 import { WsProvider, ApiPromise } from "@polkadot/api";
-import { Option } from "@polkadot/types";
+import { Option, TypeRegistry } from "@polkadot/types";
 import { OpaqueMetadata } from "@polkadot/types/interfaces";
 import { SignerPayloadJSON } from "@polkadot/types/types";
 
 import { get_short_metadata } from "@talismn/metadata-shortener-wasm";
 import { getHexPayload } from "./getHexPayload";
+import { u8aToNumber } from "@polkadot/util";
 
 type ChainProperties = {
   ss58Format: number;
@@ -24,9 +25,6 @@ export const getShortMetadata = async (
     [],
     true
   );
-  console.log({ chainProperties });
-
-  // JSON.stringify(chainProperties, null, 2);
 
   const api = new ApiPromise({ provider });
   await api.isReady;
@@ -35,25 +33,48 @@ export const getShortMetadata = async (
   >(15);
 
   if (maybeHexMetadata.isNone) throw new Error("metadata not found");
-  const hexMetadata = maybeHexMetadata.unwrap().toHex().slice(2);
+
+  const hexMetadata = metadataFromOpaque(maybeHexMetadata.unwrap());
+
+  //check
+  const metadata = new TypeRegistry().createType("Metadata", hexMetadata);
+  console.log(
+    "Metadata version",
+    metadata.version,
+    hexMetadata.toString().slice(0, 15)
+  );
 
   const hexPayload = getHexPayload(payload);
 
-  // await new Promise((resolve) => setTimeout(resolve, 1000));
-
-  //   await initMetadataShortener();
-
-  //   return (await get_short_metadata("hi", "hey", {
-  //     base58prefix: 0,
-  //     decimals: 10,
-  //     unit: "dot",
-  //   })) as string;
-
   return (await get_short_metadata(
-    hexMetadata,
+    hexMetadata.substring(2),
     hexPayload,
     chainProperties.tokenSymbol,
     chainProperties.tokenDecimals,
     chainProperties.ss58Format
   )) as string;
+};
+
+const metadataFromOpaque = (opaque: OpaqueMetadata) => {
+  try {
+    // pjs codec for OpaqueMetadata doesn't allow us to decode the actual Metadata, find it ourselves
+    const u8aBytes = opaque.toU8a();
+    for (let i = 0; i < 20; i++) {
+      // skip until we find the magic number that is used as prefix of metadata objects (usually in the first 10 bytes)
+      if (u8aToNumber(u8aBytes.slice(i, i + 4)) !== 0x6174656d) continue;
+
+      const metadata = new TypeRegistry().createType(
+        "Metadata",
+        u8aBytes.slice(i)
+      );
+
+      return metadata.toHex();
+    }
+    throw new Error("Magic number not found");
+  } catch (err) {
+    throw new Error(
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      "Failed to decode metadata from OpaqueMetadata:" + (err as any).message
+    );
+  }
 };

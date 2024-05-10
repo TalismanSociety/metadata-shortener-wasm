@@ -9,13 +9,13 @@ use wasm_bindgen::prelude::*;
 
 #[wasm_bindgen]
 pub fn get_short_metadata(
-    opaque_metadata_v15:String, payload:String, unit:String, decimals:u8, base58prefix:u16
+    metadata_v15:String, payload:String, unit:String, decimals:u8, base58prefix:u16
 ) -> String {
   
     let data = hex::decode(payload).unwrap();
     
-    let opaque_metadata = hex::decode(opaque_metadata_v15).unwrap();
-    let full_metadata = RuntimeMetadataV15::decode(&mut &opaque_metadata[5..]).unwrap();
+    let metadata = hex::decode(metadata_v15).unwrap();
+    let full_metadata = RuntimeMetadataV15::decode(&mut &metadata[5..]).unwrap();
 
     let short_specs = ShortSpecs {
         unit,
