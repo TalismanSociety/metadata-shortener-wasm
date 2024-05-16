@@ -9,5 +9,5 @@ export const getHexPayload = (payload: SignerPayloadJSON) => {
     version: payload.version,
   });
 
-  return u8aToHex(extPayload.toU8a(true), undefined, false);
+  return u8aToHex(extPayload.toU8a(true));
 };

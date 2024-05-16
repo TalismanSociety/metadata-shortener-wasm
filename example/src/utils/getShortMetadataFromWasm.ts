@@ -3,9 +3,10 @@ import { Option, TypeRegistry } from "@polkadot/types";
 import { OpaqueMetadata } from "@polkadot/types/interfaces";
 import { SignerPayloadJSON } from "@polkadot/types/types";
 
-import { get_short_metadata } from "@talismn/metadata-shortener-wasm";
+import { get_short_metadata_from_tx_blob } from "@talismn/metadata-shortener-wasm";
 import { getHexPayload } from "./getHexPayload";
 import { u8aToNumber } from "@polkadot/util";
+import { hexToNumber } from "@polkadot/util/hex";
 
 type ChainProperties = {
   ss58Format: number;
@@ -20,11 +21,10 @@ export const getShortMetadata = async (
   const provider = new WsProvider(wsUrl);
   await provider.isReady;
 
-  const chainProperties = await provider.send<ChainProperties>(
-    "system_properties",
-    [],
-    true
-  );
+  const [chainProperties, { specName }] = await Promise.all([
+    provider.send<ChainProperties>("system_properties", [], true),
+    provider.send<{ specName: string }>("state_getRuntimeVersion", [], true),
+  ]);
 
   const api = new ApiPromise({ provider });
   await api.isReady;
@@ -46,12 +46,14 @@ export const getShortMetadata = async (
 
   const hexPayload = getHexPayload(payload);
 
-  return (await get_short_metadata(
+  return (await get_short_metadata_from_tx_blob(
     hexMetadata.substring(2),
-    hexPayload,
+    hexPayload.substring(2),
     chainProperties.tokenSymbol,
     chainProperties.tokenDecimals,
-    chainProperties.ss58Format
+    chainProperties.ss58Format,
+    specName,
+    hexToNumber(payload.specVersion)
   )) as string;
 };
 
