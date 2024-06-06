@@ -6,7 +6,7 @@ pub fn get_parts_len_from_tx_blob(
     mut tx_blob: &[u8],
     metadata: &RuntimeMetadata,
 ) -> Result<Vec<usize>, String> {
-    let mut call_data_len:usize = 0;
+    //let mut call_data_len:usize = 0;
     let mut signed_extensions_in_extrinsic_len:usize = 0;
 
     let prepared = FrameMetadataPrepared::prepare(metadata)?;
@@ -27,7 +27,7 @@ pub fn get_parts_len_from_tx_blob(
     )
         .map_err(|e| format!("Failed to decode call: {e}"))?;
 
-    call_data_len = tx_blob_ptr_init_len - tx_blob_ptr.len();
+    let call_data_len:usize = tx_blob_ptr_init_len - tx_blob_ptr.len();
 
     if !tx_blob_ptr.is_empty() {
         let included_in_extrinsic = &tx_blob_ptr.to_vec();
@@ -36,7 +36,7 @@ pub fn get_parts_len_from_tx_blob(
             included_in_signed_data: &[],
         });
 
-        let visitor = signed_ext_data
+        let _visitor = signed_ext_data
             .map(|mut signed_ext_data| {
                 visitor.collect_all_types(
                     &type_information.extrinsic_metadata.address_ty,
