@@ -1,6 +1,6 @@
 # @talismn/metadata-shortener-wasm
 
-This crate is a Rust implementation of the metadata shortener algorithm. It is compiled to WebAssembly and can be used in the browser.
+This project wraps [Zondax's metadata shortener](https://github.com/Zondax/ledger-polkadot-generic-api) in a webassembly blob so it can be used by Talisman wallet.
 
 ## 🚴 Usage
 

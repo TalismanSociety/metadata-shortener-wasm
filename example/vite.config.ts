@@ -6,11 +6,6 @@ import topLevelAwait from "vite-plugin-top-level-await";
 // https://vitejs.dev/config/
 export default defineConfig({
   plugins: [wasm(), topLevelAwait(), react()],
-  // server: {
-  //   fs: {
-  //     allow: [".."], // one folder up, so the wasm project is accessible
-  //   },
-  // },
   optimizeDeps: {
     exclude: ["@syntect/wasm"],
   },
