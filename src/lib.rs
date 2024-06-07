@@ -1,8 +1,9 @@
 /**
- * Adapted from https://github.com/Zondax/ledger-polkadot-generic-api/blob/master/rust/src/lib.rs
- * Changes June 7th 2024 : 
- * - adjusted get_short_metadata_from_tx_blob signature to be wasm-bindgen compliant
- * 
+   Adapted from https://github.com/Zondax/ledger-polkadot-generic-api/blob/master/rust/src/lib.rs
+   Changes June 7th 2024 : 
+   - adjusted get_short_metadata_from_tx_blob signature to be wasm-bindgen compliant
+   - removed unused code
+   
    Copyright 2024 Zondax
 
    Licensed under the Apache License, Version 2.0 (the "License");

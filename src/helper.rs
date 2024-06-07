@@ -1,8 +1,8 @@
 /**
- * Adapted from https://github.com/Zondax/ledger-polkadot-generic-api/blob/master/rust/src/helper.rs
- * Changes June 7th 2024 : 
- * - removed unused code
- * 
+   Adapted from https://github.com/Zondax/ledger-polkadot-generic-api/blob/master/rust/src/helper.rs
+   Changes June 7th 2024 : 
+   - removed unused code
+   
    Copyright 2024 Zondax
 
    Licensed under the Apache License, Version 2.0 (the "License");
