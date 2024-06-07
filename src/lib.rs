@@ -19,7 +19,7 @@ pub struct MetadataProof {
 }
 
 #[wasm_bindgen]
-pub fn get_short_metadata_from_tx_blob(metadata_v15:String, payload:String, token_symbol:String, decimals:u8, base58_prefix:u16, spec_name:String, spec_version:u32) -> String {
+pub fn get_short_metadata_from_tx_blob(metadata_v15:String, payload:String, token_symbol:String, decimals:u8, base58_prefix:u16, spec_name:String, spec_version:u32) -> Result<String, JsError> {
     
     let specs = ExtraInfo {
         base58_prefix,
@@ -38,7 +38,7 @@ pub fn get_short_metadata_from_tx_blob(metadata_v15:String, payload:String, toke
     let parts_lens =
         match get_parts_len_from_tx_blob(&tx_blob, &runtime_meta) {
             Ok(x) => x,
-            Err(err) => return err,
+            Err(err) => return Err(JsError::new(&err)),
         };
 
     let call_data = tx_blob[0..parts_lens[0]].to_vec();
@@ -52,7 +52,7 @@ pub fn get_short_metadata_from_tx_blob(metadata_v15:String, payload:String, toke
     let registry_proof =
         match generate_proof_for_extrinsic_parts(&call_data, Some(sig_ext), &runtime_meta) {
             Ok(x) => x,
-            Err(err) => return err,
+            Err(err) => return Err(JsError::new(&err)),
         };
 
     // Generates extrinsic_metadata in the same way the crate does
@@ -71,5 +71,5 @@ pub fn get_short_metadata_from_tx_blob(metadata_v15:String, payload:String, toke
         extrinsic: extrinsic_metadata,
         extra_info: specs,
     };
-    hex::encode(meta_proof.encode())
+    Ok(hex::encode(meta_proof.encode()))
 }

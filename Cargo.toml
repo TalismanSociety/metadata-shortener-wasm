@@ -2,7 +2,7 @@
 name = "metadata-shortener-wasm"
 version = "0.1.0"
 authors = ["Kheops <26880866+0xKheops@users.noreply.github.com>"]
-description = "A WASM wrapper around the metadata-shortener crate"
+description = "A WASM wrapper around Zondax's metadata-shortener for Ledger Polkadot generic app"
 edition = "2018"
 
 [lib]
@@ -18,13 +18,8 @@ frame-metadata = { version = "16.0.0", default-features = false, features = [
     "decode",
 ] }
 hex = "0.4.3"
-# merkleized-metadata = { git = "https://github.com/bkchr/merkleized-metadata.git", default-features = false }
 merkleized-metadata = { git = "https://github.com/Zondax/merkleized-metadata", default-features = false, rev = "cd1363a2c4702abf34fcc461055f0059b3c32bec" }
 parity-scale-codec = { version = "3.6.9", default-features = false }
-# parity-scale-codec = { version = "3.6.9", default-features = false, features = [
-#     "derive",
-#     "bit-vec",
-# ] }
 scale-info = { version = "2.11.1", default-features = false }
 array-bytes = { version = "6.2.3", default-features = false }
 getrandom = { version = "0.2", features = ["js"] }
