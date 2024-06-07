@@ -20,5 +20,6 @@ wasm-pack build --scope talismn
 ### 🎁 Publish to NPM with `wasm-pack publish`
 
 ```sh
-wasm-pack publish
+cd pkg
+npm publish --access=public
 ```
