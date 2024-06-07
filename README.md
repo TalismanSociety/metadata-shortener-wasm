@@ -17,7 +17,7 @@ This project wraps [Zondax's metadata shortener](https://github.com/Zondax/ledge
 wasm-pack build --scope talismn
 ```
 
-### 🎁 Publish to NPM with `wasm-pack publish`
+### 🎁 Publish to NPM
 
 ```sh
 cd pkg
