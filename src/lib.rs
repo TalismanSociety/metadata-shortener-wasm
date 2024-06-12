@@ -25,11 +25,10 @@ use parity_scale_codec::{Decode, Encode};
 use frame_metadata::v15::RuntimeMetadataV15;
 use frame_metadata::{RuntimeMetadata, RuntimeMetadataPrefixed};
 use merkleized_metadata::{
-    generate_proof_for_extrinsic_parts, ExtraInfo, ExtrinsicMetadata,
+    generate_proof_for_extrinsic_parts, generate_metadata_digest, ExtraInfo, ExtrinsicMetadata,
     FrameMetadataPrepared, Proof, SignedExtrinsicData
 };
 use wasm_bindgen::prelude::*;
-
 use crate::helper::get_parts_len_from_tx_blob;
 
 #[derive(Encode)]
@@ -93,4 +92,25 @@ pub fn get_short_metadata_from_tx_blob(metadata_v15:String, payload:String, toke
         extra_info: specs,
     };
     Ok(hex::encode(meta_proof.encode()))
+}
+
+#[wasm_bindgen]
+pub fn get_metadata_digest(metadata_v15:String, token_symbol:String, decimals:u8, base58_prefix:u16, spec_name:String, spec_version:u32)  -> Result<String, JsError> {
+    let specs = ExtraInfo {
+        base58_prefix,
+        decimals,
+        token_symbol,
+        spec_name,
+        spec_version,
+    };
+    
+    let metadata = hex::decode(metadata_v15).unwrap();
+    let runtime_meta_v15 = RuntimeMetadataV15::decode(&mut &metadata[5..]).unwrap();
+    let runtime_meta = RuntimeMetadata::V15(runtime_meta_v15);
+
+    let digest = match generate_metadata_digest(&runtime_meta, specs) {
+        Ok(x) => hex::encode(x.hash()),
+        Err(err) => return Err(JsError::new(&err)),
+    };
+    Ok(digest)
 }

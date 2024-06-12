@@ -31,8 +31,7 @@ export const DEFAULT_PAYLOAD: SignerPayloadJSON = {
   version: 4,
 };
 
-export const DEFAULT_API_URL =
-  "https://api.zondax.ch/polkadot/transaction/metadata";
+export const DEFAULT_API_URL = "https://api.zondax.ch/polkadot";
 
 export const DEFAULT_CHAIN_ID = "roc";
 

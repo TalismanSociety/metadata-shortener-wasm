@@ -1,24 +1,18 @@
-import { SignerPayloadJSON } from "@polkadot/types/types";
 import { HexString } from "@polkadot/util/types";
-import { getHexPayload } from "./getHexPayload";
 import urlJoin from "url-join";
 
-export const getShortMetadataFromApi = async (
+export const getMetadataHashFromApi = async (
   zondaxApiUrl: string, // https://api.zondax.ch/polkadot/transaction/metadata
-  zondaxChainId: string, // dot-hub
-  payload: SignerPayloadJSON
+  zondaxChainId: string // dot-hub
 ) => {
-  const hexPayload = getHexPayload(payload);
-
-  const req = await fetch(urlJoin(zondaxApiUrl, "transaction/metadata"), {
+  const req = await fetch(urlJoin(zondaxApiUrl, "/node/metadata/hash"), {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
       accept: "application/json",
     },
     body: JSON.stringify({
-      chain: { id: zondaxChainId },
-      txBlob: hexPayload,
+      id: zondaxChainId,
     }),
   });
 
@@ -30,7 +24,7 @@ export const getShortMetadataFromApi = async (
     throw new Error("Failed to fetch shortened metadata");
   }
 
-  const { txMetadata } = (await req.json()) as { txMetadata: HexString };
+  const { metadataHash } = (await req.json()) as { metadataHash: HexString };
 
-  return txMetadata;
+  return metadataHash;
 };

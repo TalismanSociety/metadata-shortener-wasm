@@ -1,10 +1,8 @@
 import { WsProvider, ApiPromise } from "@polkadot/api";
 import { Option, TypeRegistry } from "@polkadot/types";
 import { OpaqueMetadata } from "@polkadot/types/interfaces";
-import { SignerPayloadJSON } from "@polkadot/types/types";
 
-import { get_short_metadata_from_tx_blob } from "@talismn/metadata-shortener-wasm";
-import { getHexPayload } from "./getHexPayload";
+import { get_metadata_digest } from "@talismn/metadata-shortener-wasm";
 import { u8aToNumber } from "@polkadot/util";
 import { hexToNumber } from "@polkadot/util/hex";
 
@@ -14,17 +12,20 @@ type ChainProperties = {
   tokenSymbol: string;
 };
 
-export const getShortMetadata = async (
-  wsUrl: string,
-  payload: SignerPayloadJSON
-) => {
+export const getMetadataHash = async (wsUrl: string) => {
   const provider = new WsProvider(wsUrl);
   await provider.isReady;
 
-  const [chainProperties, { specName }] = await Promise.all([
+  const [chainProperties, { specName, specVersion }] = await Promise.all([
     provider.send<ChainProperties>("system_properties", [], true),
-    provider.send<{ specName: string }>("state_getRuntimeVersion", [], true),
+    provider.send<{ specName: string; specVersion: string }>(
+      "state_getRuntimeVersion",
+      [],
+      true
+    ),
   ]);
+
+  console.log({ specVersion });
 
   const api = new ApiPromise({ provider });
   await api.isReady;
@@ -44,18 +45,14 @@ export const getShortMetadata = async (
     hexMetadata.toString().slice(0, 15)
   );
 
-  const hexPayload = getHexPayload(payload);
-
-  return ("0x" +
-    (await get_short_metadata_from_tx_blob(
-      hexMetadata.substring(2),
-      hexPayload.substring(2),
-      chainProperties.tokenSymbol,
-      chainProperties.tokenDecimals,
-      chainProperties.ss58Format,
-      specName,
-      hexToNumber(payload.specVersion)
-    ))) as string;
+  return (await get_metadata_digest(
+    hexMetadata.substring(2),
+    chainProperties.tokenSymbol,
+    chainProperties.tokenDecimals,
+    chainProperties.ss58Format,
+    specName,
+    hexToNumber(specVersion)
+  )) as string;
 };
 
 const metadataFromOpaque = (opaque: OpaqueMetadata) => {

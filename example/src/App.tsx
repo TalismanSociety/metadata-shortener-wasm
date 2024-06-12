@@ -10,6 +10,8 @@ import {
   DEFAULT_PAYLOAD,
   DEFAULT_WS_URL,
 } from "./utils/constants";
+import { getMetadataHashFromApi } from "./utils/getMetadataHashFromApi";
+import { getMetadataHash } from "./utils/getMetadataHashFromWasm";
 
 function App() {
   const [strPayload, setStrPayload] = useState(
@@ -22,6 +24,8 @@ function App() {
 
   const [outputZondax, setOutputZondax] = useState("");
   const [outputLocal, setOutputLocal] = useState("");
+  const [hashZondax, setHashZondax] = useState("");
+  const [hashLocal, setHashLocal] = useState("");
 
   const compareOutputs = useCallback(async () => {
     setOutputZondax("Loading...");
@@ -32,6 +36,7 @@ function App() {
       setOutputZondax(
         await getShortMetadataFromApi(zondaxApiUrl, zondaxChainId, payload)
       );
+      setHashZondax(await getMetadataHashFromApi(zondaxApiUrl, zondaxChainId));
     } catch (err) {
       setOutputZondax("ERROR: " + (err as Error).message);
     }
@@ -39,6 +44,7 @@ function App() {
     try {
       const payload = JSON.parse(strPayload);
       setOutputLocal(await getShortMetadata(wsUrl, payload));
+      setHashLocal(await getMetadataHash(wsUrl));
     } catch (err) {
       setOutputLocal("ERROR: " + (err as Error).message);
     }
@@ -99,6 +105,19 @@ function App() {
             marginTop: 8,
           }}
         >
+          Hash: {hashZondax}
+        </div>
+        <div
+          style={{
+            overflow: "auto",
+            maxHeight: 200,
+            width: "100%",
+            maxWidth: "100%",
+            wordBreak: "break-all",
+            textAlign: "left",
+            marginTop: 8,
+          }}
+        >
           {outputZondax}
         </div>
       </fieldset>
@@ -121,6 +140,19 @@ function App() {
             onChange={(e) => setWsUrl(e.target.value)}
             style={{ width: "100%", height: 30, padding: "0 5px" }}
           />
+        </div>
+        <div
+          style={{
+            overflow: "auto",
+            maxHeight: 200,
+            width: "100%",
+            maxWidth: "100%",
+            wordBreak: "break-all",
+            textAlign: "left",
+            marginTop: 8,
+          }}
+        >
+          Hash: {hashLocal}
         </div>
         <div
           style={{
