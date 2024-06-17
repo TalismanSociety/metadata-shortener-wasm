@@ -13,13 +13,11 @@ This project wraps [Zondax's metadata shortener](https://github.com/Zondax/ledge
 ### 🛠️ Build with `wasm-pack build`
 
 ```sh
-# specify scope for npm package to be named @talismn/metadata-shortener-wasm
-wasm-pack build --scope talismn
+./build.sh
 ```
 
 ### 🎁 Publish to NPM
 
 ```sh
-cd pkg
-npm publish --access=public
+./publish.sh
 ```

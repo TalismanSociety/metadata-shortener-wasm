@@ -1,6 +1,6 @@
 [package]
 name = "metadata-shortener-wasm"
-version = "0.1.3"
+version = "0.1.4"
 authors = ["Kheops <26880866+0xKheops@users.noreply.github.com>"]
 description = "A WASM wrapper around Zondax's metadata-shortener for Ledger Polkadot generic app"
 repository = "https://github.com/TalismanSociety/metadata-shortener-wasm"
